@@ -25,6 +25,8 @@ import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import java.util.List;
 
+import frc.robot.subsystems.Intake;
+
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -34,6 +36,8 @@ import java.util.List;
 public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+ 
+  private final Intake m_intake = new Intake();
 
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -72,7 +76,23 @@ public class RobotContainer {
         .whileTrue(new RunCommand(
             () -> m_robotDrive.setX(),
             m_robotDrive));
-  }
+  
+    new JoystickButton(m_driverController, 1)
+        .whileTrue(new RunCommand(
+            () -> m_intake.intakeRun(), 
+            m_intake));
+           
+    new JoystickButton(m_driverController, 2)
+        .whileTrue(new RunCommand(
+            () -> m_intake.intakeStop(), 
+            m_intake));
+  
+            new JoystickButton(m_driverController, 3)
+            .whileTrue(new RunCommand(
+                () -> m_intake.intakeReverse(), 
+                m_intake));
+  
+        }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
