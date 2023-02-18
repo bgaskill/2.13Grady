@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import java.util.List;
 
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Launcher;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -38,6 +39,9 @@ public class RobotContainer {
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
  
   private final Intake m_intake = new Intake();
+
+  private final Launcher m_launcher = new Launcher();
+
 
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -77,7 +81,7 @@ public class RobotContainer {
             () -> m_robotDrive.setX(),
             m_robotDrive));
   
-    new JoystickButton(m_driverController, 1)
+    new JoystickButton(m_driverController, 5)
         .onTrue(new RunCommand(
             () -> m_intake.intakeRun(), 
             m_intake)).onFalse(new RunCommand(
@@ -93,6 +97,16 @@ public class RobotContainer {
                     () -> m_intake.intakeStop(),
                     m_intake)); 
   
+                    new JoystickButton(m_driverController, 1)
+                    .whileTrue(new RunCommand(
+                        () -> m_launcher.lowShot(), 
+                        m_launcher)); 
+          
+                        new JoystickButton(m_driverController, 4)
+                        .whileTrue(new RunCommand(
+                            () -> m_launcher.highShot(), 
+                            m_launcher)); 
+
         }
 
   /**
