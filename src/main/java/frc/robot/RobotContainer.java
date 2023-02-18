@@ -78,19 +78,20 @@ public class RobotContainer {
             m_robotDrive));
   
     new JoystickButton(m_driverController, 1)
-        .whileTrue(new RunCommand(
+        .onTrue(new RunCommand(
             () -> m_intake.intakeRun(), 
-            m_intake));
+            m_intake)).onFalse(new RunCommand(
+                () -> m_intake.intakeStop(),
+                m_intake)); 
+                
            
-    new JoystickButton(m_driverController, 2)
-        .whileTrue(new RunCommand(
-            () -> m_intake.intakeStop(), 
-            m_intake));
   
             new JoystickButton(m_driverController, 3)
             .whileTrue(new RunCommand(
                 () -> m_intake.intakeReverse(), 
-                m_intake));
+                m_intake)).onFalse(new RunCommand(
+                    () -> m_intake.intakeStop(),
+                    m_intake)); 
   
         }
 
