@@ -27,6 +27,7 @@ import java.util.List;
 
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Launcher;
+import frc.robot.subsystems.Arm;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -42,6 +43,7 @@ public class RobotContainer {
 
   private final Launcher m_launcher = new Launcher();
 
+  private final Arm m_arm = new Arm();
 
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
@@ -106,7 +108,17 @@ public class RobotContainer {
                         .whileTrue(new RunCommand(
                             () -> m_launcher.highShot(), 
                             m_launcher)); 
+                            
+                            
+            new JoystickButton(m_driverController, 7)
+                            .whileTrue(new RunCommand(
+                                () -> m_arm.armUp(), 
+                                m_arm)); 
 
+                                new JoystickButton(m_driverController, 8)
+                            .whileTrue(new RunCommand(
+                                () -> m_arm.armDown(), 
+                                m_arm)); 
         }
 
   /**
@@ -123,7 +135,7 @@ public class RobotContainer {
         .setKinematics(DriveConstants.kDriveKinematics);
        
     // An example trajectory to follow. All units in meters.
-    Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+    Trajectory straigthGamePiece = TrajectoryGenerator.generateTrajectory(
         // Start at the origin facing the +X direction
         new Pose2d(0, 0, new Rotation2d(0)),
         // Pass through these two interior waypoints, making an 's' curve path
@@ -132,14 +144,29 @@ public class RobotContainer {
         new Pose2d(4.7, 0, new Rotation2d(0)),
         config);
 
+        Trajectory backToStart = TrajectoryGenerator.generateTrajectory(
+            // Start at the origin facing the +X direction
+            new Pose2d(0, 0, new Rotation2d(0)),
+            // Pass through these two interior waypoints, making an 's' curve path
+            List.of(new Translation2d(-1, 0), new Translation2d(-3, 0)),
+            // End 3 meters straight ahead of where we started, facing forward
+            new Pose2d(-4.7, 0, new Rotation2d(0)),
+            config);
+
+
+
+
+
+
     var thetaController = new ProfiledPIDController(
         AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
     SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-        exampleTrajectory,
+        straigthGamePiece,
         m_robotDrive::getPose, // Functional interface to feed supplier
         DriveConstants.kDriveKinematics,
+        
 
         // Position controllers
         new PIDController(AutoConstants.kPXController, 0, 0),
@@ -148,8 +175,10 @@ public class RobotContainer {
         m_robotDrive::setModuleStates,
         m_robotDrive);
 
+
+        
     // Reset odometry to the starting pose of the trajectory.
-    m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
+    m_robotDrive.resetOdometry(straigthGamePiece.getInitialPose());
 
 
      
