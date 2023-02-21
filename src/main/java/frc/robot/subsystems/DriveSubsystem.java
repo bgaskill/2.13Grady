@@ -196,6 +196,10 @@ public class DriveSubsystem extends SubsystemBase {
     m_rearRight.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(45)));
   }
 
+
+  
+
+  
   /**
    * Sets the swerve ModuleStates.
    *
@@ -222,7 +226,13 @@ public class DriveSubsystem extends SubsystemBase {
   public void zeroHeading() {
     m_gyro.reset();
   }
+  public void changeSpeedHigh () {
+    DriveConstants.kMaxSpeedMetersPerSecond= 3;
+  }
 
+  public void changeSpeedLow() {
+    DriveConstants.kMaxSpeedMetersPerSecond= 1;
+  }
   /**
    * Returns the heading of the robot.
    *

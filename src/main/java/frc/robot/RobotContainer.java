@@ -1,3 +1,11 @@
+//fix timer locking drivetrain on shots
+//create Speed buttons
+//Auto choosher
+//multiple trajectories
+//pathplanning
+//joystick arm control
+//reset gyro
+
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
@@ -38,16 +46,13 @@ import frc.robot.subsystems.Arm;
 public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
- 
   private final Intake m_intake = new Intake();
-
   private final Launcher m_launcher = new Launcher();
-
   private final Arm m_arm = new Arm();
 
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
-
+  XboxController m_operatorController = new XboxController(OIConstants.kOperatorControllerPort);
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -66,7 +71,8 @@ public class RobotContainer {
                 -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
                 true, true),
             m_robotDrive));
-  }
+        
+        }
 
   /**
    * Use this method to define your button->command mappings. Buttons can be
@@ -78,11 +84,28 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
-    new JoystickButton(m_driverController, Button.kR1.value)
+    
+    // set wheels in x pattern  Acts a a brake
+    new JoystickButton(m_driverController, 10)
         .whileTrue(new RunCommand(
             () -> m_robotDrive.setX(),
             m_robotDrive));
-  
+//start button on driver resets gyro--laucher facing driver station
+    new JoystickButton(m_driverController, 8)
+            .whileTrue(new RunCommand(
+                () -> m_robotDrive.zeroHeading(),
+                m_robotDrive));        
+    /* 
+                new JoystickButton(m_driverController, 7)
+                .whileTrue(new RunCommand(
+                    () -> m_robotDrive.changeSpeedHigh(),
+                    m_robotDrive)).whileFalse(new RunCommand(()-> m_robotDrive.changeSpeedLow(),
+                    m_robotDrive));
+                    
+       */          
+                        
+
+     //turns on intake when presses (left bumper) turns off when released       
     new JoystickButton(m_driverController, 5)
         .onTrue(new RunCommand(
             () -> m_intake.intakeRun(), 
@@ -91,35 +114,56 @@ public class RobotContainer {
                 m_intake)); 
                 
            
-  
-            new JoystickButton(m_driverController, 3)
-            .whileTrue(new RunCommand(
+    //Reverses intake 
+    new JoystickButton(m_driverController, 6)
+        .whileTrue(new RunCommand(
                 () -> m_intake.intakeReverse(), 
                 m_intake)).onFalse(new RunCommand(
                     () -> m_intake.intakeStop(),
                     m_intake)); 
   
-                    new JoystickButton(m_driverController, 1)
+    //low shot                changed from whiletrue
+    new JoystickButton(m_driverController, 1)
                     .whileTrue(new RunCommand(
                         () -> m_launcher.lowShot(), 
                         m_launcher)); 
+
+
           
-                        new JoystickButton(m_driverController, 4)
+    //high shot--locks drive in current state needs fixing                    
+//changed from whiletrue
+    new JoystickButton(m_driverController, 4)
                         .whileTrue(new RunCommand(
                             () -> m_launcher.highShot(), 
                             m_launcher)); 
                             
-                            
-            new JoystickButton(m_driverController, 7)
+    //sets arm to up position                        
+    new JoystickButton(m_driverController, 3)
                             .whileTrue(new RunCommand(
                                 () -> m_arm.armUp(), 
                                 m_arm)); 
 
-                                new JoystickButton(m_driverController, 8)
+    //sets arm to down position
+    new JoystickButton(m_driverController, 2)
                             .whileTrue(new RunCommand(
                                 () -> m_arm.armDown(), 
                                 m_arm)); 
-        }
+     
+                                
+    new JoystickButton(m_operatorController, 2)
+                            .whileTrue(new RunCommand(
+                                    () -> m_arm.armJoystickControl(m_operatorController.getLeftY()*-.1), 
+                                    m_arm));                             
+   
+                                //joystick arm control
+    //m_arm.armJoystickControl(m_operatorController.getLeftY());   
+     
+        
+                           //change max speed
+      //new JoystickButton(m_driverController, 9)
+        //.whileTrue(getAutonomousCommand())(DriveConstants.kMaxSpeedMetersPerSecond = 4,m_robotDrive);
+    
+    }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

@@ -1,3 +1,6 @@
+//put PID variables and set them up
+//limit switches and hard stops on robot
+
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
@@ -41,11 +44,17 @@ public class Arm extends SubsystemBase {
 
 
   public void armUp(){
-talonArm.set(TalonFXControlMode.Position,-1000);
+talonArm.set(TalonFXControlMode.Position,ArmConstants.kUpPosition);
   }
 
   public void armDown(){
-    talonArm.set(TalonFXControlMode.Position,-38000);
+    talonArm.set(TalonFXControlMode.Position,ArmConstants.kDownPosition);
   }
+
+  public void armJoystickControl(double speed){
+
+    talonArm.set(TalonFXControlMode.PercentOutput,speed);
+  }
+
 
 }
