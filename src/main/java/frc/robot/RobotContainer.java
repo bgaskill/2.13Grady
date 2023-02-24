@@ -66,12 +66,12 @@ public class RobotContainer {
         // Turning is controlled by the X axis of the right stick.
         new RunCommand(
             () -> m_robotDrive.drive(
-                -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-                -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband(Math.abs(m_driverController.getLeftY())*m_driverController.getLeftY(), OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband(Math.abs(m_driverController.getLeftX())*m_driverController.getLeftX(), OIConstants.kDriveDeadband),
+                -MathUtil.applyDeadband(Math.abs(m_driverController.getRightX())*m_driverController.getRightX(), OIConstants.kDriveDeadband),
                 true, true),
             m_robotDrive));
-        
+  
         }
 
   /**
@@ -106,7 +106,7 @@ public class RobotContainer {
                         
 
      //turns on intake when presses (left bumper) turns off when released       
-    new JoystickButton(m_driverController, 5)
+    new JoystickButton(m_operatorController, 5)
         .onTrue(new RunCommand(
             () -> m_intake.intakeRun(), 
             m_intake)).onFalse(new RunCommand(
@@ -115,7 +115,7 @@ public class RobotContainer {
                 
            
     //Reverses intake 
-    new JoystickButton(m_driverController, 6)
+    new JoystickButton(m_operatorController, 6)
         .whileTrue(new RunCommand(
                 () -> m_intake.intakeReverse(), 
                 m_intake)).onFalse(new RunCommand(
@@ -138,13 +138,13 @@ public class RobotContainer {
                             m_launcher)); 
                             
     //sets arm to up position                        
-    new JoystickButton(m_driverController, 3)
+    new JoystickButton(m_operatorController, 4)
                             .whileTrue(new RunCommand(
                                 () -> m_arm.armUp(), 
                                 m_arm)); 
 
     //sets arm to down position
-    new JoystickButton(m_driverController, 2)
+    new JoystickButton(m_operatorController, 1)
                             .whileTrue(new RunCommand(
                                 () -> m_arm.armDown(), 
                                 m_arm)); 
