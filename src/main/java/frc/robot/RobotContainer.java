@@ -86,7 +86,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     
     // set wheels in x pattern  Acts a a brake
-    new JoystickButton(m_driverController, 10)
+    new JoystickButton(m_driverController, 2)
         .whileTrue(new RunCommand(
             () -> m_robotDrive.setX(),
             m_robotDrive));
@@ -95,14 +95,19 @@ public class RobotContainer {
             .whileTrue(new RunCommand(
                 () -> m_robotDrive.zeroHeading(),
                 m_robotDrive));        
-    /* 
-                new JoystickButton(m_driverController, 7)
+    
+                new JoystickButton(m_driverController, 5)
+                .whileTrue(new RunCommand(
+                    () -> m_robotDrive.changeSpeedLow(),
+                    m_robotDrive))//.whileFalse(new RunCommand(()-> m_robotDrive.changeSpeedLow(),
+                    //m_robotDrive))
+                    ;
+                    
+                    new JoystickButton(m_driverController, 6)
                 .whileTrue(new RunCommand(
                     () -> m_robotDrive.changeSpeedHigh(),
-                    m_robotDrive)).whileFalse(new RunCommand(()-> m_robotDrive.changeSpeedLow(),
-                    m_robotDrive));
-                    
-       */          
+                    m_robotDrive)); 
+              
                         
 
      //turns on intake when presses (left bumper) turns off when released       

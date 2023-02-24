@@ -227,7 +227,7 @@ public class DriveSubsystem extends SubsystemBase {
     m_gyro.reset();
   }
   public void changeSpeedHigh () {
-    DriveConstants.kMaxSpeedMetersPerSecond= 3;
+    DriveConstants.kMaxSpeedMetersPerSecond= 2;
   }
 
   public void changeSpeedLow() {
