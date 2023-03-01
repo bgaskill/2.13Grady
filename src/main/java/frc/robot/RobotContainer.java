@@ -22,7 +22,9 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.PS4Controller.Button;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+//import edu.wpi.first.wpilibj.PS4Controller.Button;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
@@ -53,12 +55,24 @@ public class RobotContainer {
   // The driver's controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
   XboxController m_operatorController = new XboxController(OIConstants.kOperatorControllerPort);
+
+//Chooser Set up
+SendableChooser<Command> chooser = new SendableChooser<>();
+
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
+
+// chooser stuff
+chooser.addOption("Auto1", getAutonomousCommand());
+chooser.addOption("Auto2", getAutonomousCommand());
+
+SmartDashboard.putData(chooser);
+
 
     // Configure default commands
     m_robotDrive.setDefaultCommand(
@@ -90,6 +104,15 @@ public class RobotContainer {
         .whileTrue(new RunCommand(
             () -> m_robotDrive.setX(),
             m_robotDrive));
+
+// set wheels at 90 degrees pattern  Acts a a brake on charge station
+new JoystickButton(m_driverController, 3)
+.whileTrue(new RunCommand(
+    () -> m_robotDrive.set90(),
+    m_robotDrive));
+
+
+
 //start button on driver resets gyro--laucher facing driver station
     new JoystickButton(m_driverController, 8)
             .whileTrue(new RunCommand(
@@ -188,18 +211,18 @@ public class RobotContainer {
         // Start at the origin facing the +X direction
         new Pose2d(0, 0, new Rotation2d(0)),
         // Pass through these two interior waypoints, making an 's' curve path
-        List.of(new Translation2d(1, 0), new Translation2d(3, 0)),
+        List.of(new Translation2d(1, .5), new Translation2d(3, .5)),
         // End 3 meters straight ahead of where we started, facing forward
-        new Pose2d(4.7, 0, new Rotation2d(0)),
+        new Pose2d(4.7, .31, new Rotation2d(0)),
         config);
 
         Trajectory backToStart = TrajectoryGenerator.generateTrajectory(
             // Start at the origin facing the +X direction
-            new Pose2d(0, 0, new Rotation2d(0)),
+            new Pose2d(4.7, .19, new Rotation2d(0)),
             // Pass through these two interior waypoints, making an 's' curve path
-            List.of(new Translation2d(-1, 0), new Translation2d(-3, 0)),
+            List.of(new Translation2d(3, .5), new Translation2d(1, .5)),
             // End 3 meters straight ahead of where we started, facing forward
-            new Pose2d(-4.7, 0, new Rotation2d(0)),
+            new Pose2d(0, 0, new Rotation2d(0)),
             config);
 
 
@@ -211,8 +234,8 @@ public class RobotContainer {
         AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
 
-    SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
-        straigthGamePiece,
+    /* SwerveControllerCommand swerveControllerCommand = new SwerveControllerCommand(
+        backToStart,
         m_robotDrive::getPose, // Functional interface to feed supplier
         DriveConstants.kDriveKinematics,
         
@@ -223,6 +246,20 @@ public class RobotContainer {
         thetaController,
         m_robotDrive::setModuleStates,
         m_robotDrive);
+ */
+        SwerveControllerCommand swerveControllerCommand2 = new SwerveControllerCommand(
+            straigthGamePiece,
+            m_robotDrive::getPose, // Functional interface to feed supplier
+            DriveConstants.kDriveKinematics,
+            
+    
+            // Position controllers
+            new PIDController(AutoConstants.kPXController, 0, 0),
+            new PIDController(AutoConstants.kPYController, 0, 0),
+            thetaController,
+            m_robotDrive::setModuleStates,
+            m_robotDrive);
+
 
 
         
@@ -234,6 +271,6 @@ public class RobotContainer {
     
          
     // Run path following command, then stop at the end.
-    return swerveControllerCommand.andThen(() -> m_robotDrive.drive(0, 0, 0, false, false));
+    return swerveControllerCommand2.andThen(() -> m_robotDrive.drive(0, 0, 0, false, false));
   }
 }
