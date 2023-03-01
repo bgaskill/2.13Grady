@@ -1,10 +1,9 @@
+/**/
 //fix timer locking drivetrain on shots
-//create Speed buttons
 //Auto choosher
 //multiple trajectories
 //pathplanning
-//joystick arm control
-//reset gyro
+
 
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
@@ -52,32 +51,34 @@ public class RobotContainer {
   private final Launcher m_launcher = new Launcher();
   private final Arm m_arm = new Arm();
 
-  // The driver's controller
+  // The driver's controller and operator controller
   XboxController m_driverController = new XboxController(OIConstants.kDriverControllerPort);
   XboxController m_operatorController = new XboxController(OIConstants.kOperatorControllerPort);
-
-//Chooser Set up
-SendableChooser<Command> chooser = new SendableChooser<>();
+    
+  //Chooser Set up
+  SendableChooser<Command> chooser = new SendableChooser<>();
 
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    
     // Configure the button bindings
     configureButtonBindings();
 
-// chooser stuff
-chooser.addOption("Auto1", getAutonomousCommand());
-chooser.addOption("Auto2", getAutonomousCommand());
+    // chooser stuff
+    chooser.addOption("Auto1", getAutonomousCommand());
+    chooser.addOption("Auto2", getAutonomousCommand());
 
-SmartDashboard.putData(chooser);
+    SmartDashboard.putData(chooser);
 
 
     // Configure default commands
     m_robotDrive.setDefaultCommand(
         // The left stick controls translation of the robot.
         // Turning is controlled by the X axis of the right stick.
+        //squares value of joystick
         new RunCommand(
             () -> m_robotDrive.drive(
                 -MathUtil.applyDeadband(Math.abs(m_driverController.getLeftY())*m_driverController.getLeftY(), OIConstants.kDriveDeadband),
@@ -105,11 +106,11 @@ SmartDashboard.putData(chooser);
             () -> m_robotDrive.setX(),
             m_robotDrive));
 
-// set wheels at 90 degrees pattern  Acts a a brake on charge station
-new JoystickButton(m_driverController, 3)
-.whileTrue(new RunCommand(
-    () -> m_robotDrive.set90(),
-    m_robotDrive));
+    // set wheels at 90 degrees pattern  Acts a a brake on charge station
+    new JoystickButton(m_driverController, 3)
+        .whileTrue(new RunCommand(
+            () -> m_robotDrive.set90(),
+            m_robotDrive));
 
 
 
@@ -119,17 +120,18 @@ new JoystickButton(m_driverController, 3)
                 () -> m_robotDrive.zeroHeading(),
                 m_robotDrive));        
     
-                new JoystickButton(m_driverController, 5)
-                .whileTrue(new RunCommand(
-                    () -> m_robotDrive.changeSpeedLow(),
-                    m_robotDrive))//.whileFalse(new RunCommand(()-> m_robotDrive.changeSpeedLow(),
-                    //m_robotDrive))
-                    ;
-                    
-                    new JoystickButton(m_driverController, 6)
-                .whileTrue(new RunCommand(
-                    () -> m_robotDrive.changeSpeedHigh(),
-                    m_robotDrive)); 
+//changes max speed to low
+    new JoystickButton(m_driverController, 5)
+            .whileTrue(new RunCommand(
+                () -> m_robotDrive.changeSpeedLow(),
+                m_robotDrive));
+
+
+//changes max speed to high
+    new JoystickButton(m_driverController, 6)
+            .whileTrue(new RunCommand(
+                () -> m_robotDrive.changeSpeedHigh(),
+                m_robotDrive)); 
               
                         
 
@@ -177,20 +179,12 @@ new JoystickButton(m_driverController, 3)
                                 () -> m_arm.armDown(), 
                                 m_arm)); 
      
-                                
+    //Joystick arm control  Red button and left stick                            
     new JoystickButton(m_operatorController, 2)
                             .whileTrue(new RunCommand(
                                     () -> m_arm.armJoystickControl(m_operatorController.getLeftY()*-.1), 
                                     m_arm));                             
-   
-                                //joystick arm control
-    //m_arm.armJoystickControl(m_operatorController.getLeftY());   
-     
-        
-                           //change max speed
-      //new JoystickButton(m_driverController, 9)
-        //.whileTrue(getAutonomousCommand())(DriveConstants.kMaxSpeedMetersPerSecond = 4,m_robotDrive);
-    
+                          
     }
 
   /**
