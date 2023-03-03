@@ -30,9 +30,26 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SwerveControllerCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import java.util.List;
+
+import java.util.HashMap;
+//import java.util.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.PathPoint;
+import com.pathplanner.lib.auto.PIDConstants;
+import com.pathplanner.lib.auto.SwerveAutoBuilder;
+import com.pathplanner.lib.commands.FollowPathWithEvents;
+import com.pathplanner.lib.commands.PPSwerveControllerCommand;
+
 
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Launcher;
@@ -68,8 +85,8 @@ public class RobotContainer {
     configureButtonBindings();
 
     // chooser stuff
-    chooser.addOption("Auto1", getAutonomousCommand());
-    chooser.addOption("Auto2", getAutonomousCommand());
+    chooser.addOption("Straight", getAutonomousCommand());
+    chooser.addOption("ForTurnRight", getAutonomousCommand());
 
     SmartDashboard.putData(chooser);
 
