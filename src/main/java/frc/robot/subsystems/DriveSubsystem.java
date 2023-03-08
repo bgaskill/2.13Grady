@@ -19,6 +19,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
 import frc.utils.SwerveUtils;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.Timer;
+
 
 public class DriveSubsystem extends SubsystemBase {
   // Create MAXSwerveModules
@@ -209,7 +211,16 @@ public class DriveSubsystem extends SubsystemBase {
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(2);
    
   }
-
+  public void set90Auto() {
+    m_frontLeft.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(90)));
+    m_frontRight.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(90)));
+    m_rearLeft.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(90)));
+    m_rearRight.setDesiredState(new SwerveModuleState(0, Rotation2d.fromDegrees(90)));
+    Timer.delay(13);
+    SmartDashboard.putNumber("pitch", m_gyro.getAccelY());
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("ledMode").setNumber(2);
+   
+  }
   
 
   

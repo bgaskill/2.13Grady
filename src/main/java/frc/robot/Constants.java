@@ -159,7 +159,7 @@ public final class Constants {
 
     public static final int kArmID = 31;
     public static final int kUpPosition = 0;
-    public static final double kDownPosition = -27000;
+    public static final double kDownPosition = -29500;
 
 
 

@@ -53,7 +53,7 @@ public class Launcher extends SubsystemBase {
     Timer.delay(.2);
     highShotSolenoid.set(DoubleSolenoid.Value.kReverse);
    retractSolenoid.set(true);
-    Timer.delay(0.27);
+    Timer.delay(0.3);
     retractSolenoid.set(false);
 
 
