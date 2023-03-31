@@ -91,7 +91,8 @@ public class RobotContainer {
     chooser.addOption("Middle", getAutonomousCommand2());
     chooser.addOption("OutsideBlue-InsideRed", getAutonomousCommand3());
     chooser.addOption("Shoot Only", getAutonomousCommand4());
-    
+    chooser.addOption("Blue Shoot and Slide Inside", getAutonomousCommand5());
+    chooser.addOption("Red Shoot and Slide Inside", getAutonomousCommand6());
     SmartDashboard.putData(chooser);
 
 
@@ -430,6 +431,111 @@ Command highLaunch = new RunCommand(
     // Run path following command, then stop at the end.
     return highLaunch.withTimeout(.3);
   }
+  public Command getAutonomousCommand5() {
+    // Create config for trajectory
+    TrajectoryConfig config = new TrajectoryConfig(
+        2,
+        AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+        // Add kinematics to ensure max speed is actually obeyed
+        .setKinematics(DriveConstants.kDriveKinematics);
+       
+    // An example trajectory to follow. All units in meters.
+    Trajectory BlueSlide = TrajectoryGenerator.generateTrajectory(
+        // Start at the origin facing the +X direction
+        new Pose2d(0, 0, new Rotation2d(0)),
+        // Pass through these two interior waypoints, making an 's' curve path
+        List.of(new Translation2d(.8, 1.8), new Translation2d(2.75, 1.8)),
+        // End 3 meters straight ahead of where we started, facing forward
+        new Pose2d(4.75, 4, new Rotation2d(0)),
+        config);
 
+
+    var thetaController = new ProfiledPIDController(
+        AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+
+   
+        SwerveControllerCommand swerveControllerCommand5 = new SwerveControllerCommand(
+            BlueSlide,
+            m_robotDrive::getPose, // Functional interface to feed supplier
+            DriveConstants.kDriveKinematics,
+            
+    
+            // Position controllers
+            new PIDController(AutoConstants.kPXController, 0, 0),
+            new PIDController(AutoConstants.kPYController, 0, 0),
+            thetaController,
+            m_robotDrive::setModuleStates,
+            m_robotDrive);
+
+
+Command highLaunch = new RunCommand(
+    () -> m_launcher.highShot(), 
+    m_launcher);
+        
+    // Reset odometry to the starting pose of the trajectory.
+    m_robotDrive.resetOdometry(BlueSlide.getInitialPose());
+
+
+     
+    
+         
+    // Run path following command, then stop at the end.
+    return highLaunch.withTimeout(.3).andThen(swerveControllerCommand5).andThen(() -> m_robotDrive.drive(0, 0, 0, false, false));
+  }
+
+
+  public Command getAutonomousCommand6() {
+    // Create config for trajectory
+    TrajectoryConfig config = new TrajectoryConfig(
+        2,
+        AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+        // Add kinematics to ensure max speed is actually obeyed
+        .setKinematics(DriveConstants.kDriveKinematics);
+       
+    // An example trajectory to follow. All units in meters.
+    Trajectory RedSlide = TrajectoryGenerator.generateTrajectory(
+        // Start at the origin facing the +X direction
+        new Pose2d(0, 0, new Rotation2d(0)),
+        // Pass through these two interior waypoints, making an 's' curve path
+        List.of(new Translation2d(.8, -1.8), new Translation2d(2.75, -1.8)),
+        // End 3 meters straight ahead of where we started, facing forward
+        new Pose2d(4.75, -4, new Rotation2d(0)),
+        config);
+
+
+    var thetaController = new ProfiledPIDController(
+        AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+
+   
+        SwerveControllerCommand swerveControllerCommand5 = new SwerveControllerCommand(
+            RedSlide,
+            m_robotDrive::getPose, // Functional interface to feed supplier
+            DriveConstants.kDriveKinematics,
+            
+    
+            // Position controllers
+            new PIDController(AutoConstants.kPXController, 0, 0),
+            new PIDController(AutoConstants.kPYController, 0, 0),
+            thetaController,
+            m_robotDrive::setModuleStates,
+            m_robotDrive);
+
+
+Command highLaunch = new RunCommand(
+    () -> m_launcher.highShot(), 
+    m_launcher);
+        
+    // Reset odometry to the starting pose of the trajectory.
+    m_robotDrive.resetOdometry(RedSlide.getInitialPose());
+
+
+     
+    
+         
+    // Run path following command, then stop at the end.
+    return highLaunch.withTimeout(.3).andThen(swerveControllerCommand5).andThen(() -> m_robotDrive.drive(0, 0, 0, false, false));
+  }
 
 }
