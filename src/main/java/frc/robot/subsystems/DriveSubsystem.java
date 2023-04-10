@@ -251,11 +251,11 @@ public class DriveSubsystem extends SubsystemBase {
     m_gyro.reset();
   }
   public void changeSpeedHigh () {
-    DriveConstants.kMaxSpeedMetersPerSecond= 1;
+    DriveConstants.kMaxSpeedMetersPerSecond= 4.8;
   }
 
   public void changeSpeedLow() {
-    DriveConstants.kMaxSpeedMetersPerSecond= .8;
+    DriveConstants.kMaxSpeedMetersPerSecond= 2;
   }
   /**
    * Returns the heading of the robot.

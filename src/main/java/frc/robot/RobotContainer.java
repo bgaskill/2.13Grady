@@ -227,9 +227,9 @@ public class RobotContainer {
         // Start at the origin facing the +X direction
         new Pose2d(0, 0, new Rotation2d(0)),
         // Pass through these two interior waypoints, making an 's' curve path
-        List.of(new Translation2d(1, .5), new Translation2d(3, .5)),
+        List.of(new Translation2d(1, .1), new Translation2d(3, .1)),
         // End 3 meters straight ahead of where we started, facing forward
-        new Pose2d(4.75, .31, new Rotation2d(0)),
+        new Pose2d(4.75, .1, new Rotation2d(0)),
         config);
 
 
@@ -264,7 +264,10 @@ Command highLaunch = new RunCommand(
     
          
     // Run path following command, then stop at the end.
-    return highLaunch.withTimeout(.3).andThen(swerveControllerCommand2).andThen(() -> m_robotDrive.drive(0, 0, 0, false, false));
+    return highLaunch.withTimeout(.3)
+        // .andThen(swerveControllerCommand2)
+        .andThen(m_robotDrive.run(() -> m_robotDrive.drive(0.2, 0, 0, false, false))).withTimeout(5.0)
+        .andThen(() -> m_robotDrive.drive(0, 0, 0, false, false));
   }
 
 
@@ -283,7 +286,7 @@ Command highLaunch = new RunCommand(
         // Pass through these two interior waypoints, making an 's' curve path
         List.of(new Translation2d(1, 0), new Translation2d(1.5, 0)),
         // End 3 meters straight ahead of where we started, facing forward
-        new Pose2d(2.75, 0, new Rotation2d(0)),
+        new Pose2d(2.7, 0, new Rotation2d(0)),
         config);
 
 
@@ -339,9 +342,9 @@ Command highLaunch = new RunCommand(
         // Start at the origin facing the +X direction
         new Pose2d(0, 0, new Rotation2d(0)),
         // Pass through these two interior waypoints, making an 's' curve path
-        List.of(new Translation2d(1, -.5), new Translation2d(3, -.5)),
+        List.of(new Translation2d(1, -.07), new Translation2d(3, -.07)),
         // End 3 meters straight ahead of where we started, facing forward
-        new Pose2d(4.75, -.31, new Rotation2d(0)),
+        new Pose2d(4.75, -.07, new Rotation2d(0)),
         config);
 
 
@@ -365,7 +368,7 @@ Command highLaunch = new RunCommand(
 
 
 Command highLaunch = new RunCommand(
-    () -> m_launcher.highShot(), 
+    () -> m_launcher.lowShot(), 
     m_launcher);
         
     // Reset odometry to the starting pose of the trajectory.
@@ -376,7 +379,10 @@ Command highLaunch = new RunCommand(
     
          
     // Run path following command, then stop at the end.
-    return highLaunch.withTimeout(.3).andThen(swerveControllerCommand3).andThen(() -> m_robotDrive.drive(0, 0, 0, false, false));
+    return highLaunch.withTimeout(.3)
+        //.andThen(swerveControllerCommand3)
+        .andThen(m_robotDrive.run(() -> m_robotDrive.drive(0.2, 0, 0, false, false))).withTimeout(5.0)
+        .andThen(m_robotDrive.run(() -> m_robotDrive.drive(0, 0, 0, false, false)));
   }
 
   public Command getAutonomousCommand4() {
