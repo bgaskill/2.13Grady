@@ -87,12 +87,14 @@ public class RobotContainer {
     configureButtonBindings();
 
     // chooser stuff
-    chooser.addOption("InsideBlue-OutsideRed", getAutonomousCommand());
-    chooser.addOption("Middle", getAutonomousCommand2());
-    chooser.addOption("OutsideBlue-InsideRed", getAutonomousCommand3());
+    chooser.addOption("InsideBlue", getAutonomousCommand());
+    chooser.addOption("Middle Engage", getAutonomousCommand2());
+    chooser.addOption("OutsideBlue", getAutonomousCommand3());
     chooser.addOption("Shoot Only", getAutonomousCommand4());
     chooser.addOption("Blue Shoot and Slide Inside", getAutonomousCommand5());
     chooser.addOption("Red Shoot and Slide Inside", getAutonomousCommand6());
+    chooser.addOption("Red Inside", getAutonomousCommand7());
+    chooser.addOption("Red Outside", getAutonomousCommand8());
     SmartDashboard.putData(chooser);
 
 
@@ -123,10 +125,10 @@ public class RobotContainer {
   private void configureButtonBindings() {
     
     // set wheels in x pattern  Acts a a brake
-    new JoystickButton(m_driverController, 2)
-        .whileTrue(new RunCommand(
-            () -> m_robotDrive.setX(),
-            m_robotDrive));
+    //new JoystickButton(m_driverController, 2)
+      //  .whileTrue(new RunCommand(
+        //    () -> m_robotDrive.setX(),
+          //  m_robotDrive));
 
     // set wheels at 90 degrees pattern  Acts a a brake on charge station
     new JoystickButton(m_driverController, 3)
@@ -175,16 +177,19 @@ public class RobotContainer {
                     m_intake)); 
   
     //low shot                changed from whiletrue
-    new JoystickButton(m_driverController, 1)
+    new JoystickButton(m_driverController, 4)
                     .whileTrue(new RunCommand(
                         () -> m_launcher.lowShot(), 
                         m_launcher)); 
 
-
+                        new JoystickButton(m_driverController, 1)
+                        .whileTrue(new RunCommand(
+                            () -> m_launcher.midShot(), 
+                            m_launcher)); 
           
     //high shot--locks drive in current state needs fixing                    
 //changed from whiletrue
-    new JoystickButton(m_driverController, 4)
+    new JoystickButton(m_driverController, 2)
                         .whileTrue(new RunCommand(
                             () -> m_launcher.highShot(), 
                             m_launcher)); 
@@ -214,10 +219,12 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
+
+   //inside blue
   public Command getAutonomousCommand() {
     // Create config for trajectory
     TrajectoryConfig config = new TrajectoryConfig(
-        2,
+        1,
         AutoConstants.kMaxAccelerationMetersPerSecondSquared)
         // Add kinematics to ensure max speed is actually obeyed
         .setKinematics(DriveConstants.kDriveKinematics);
@@ -227,7 +234,7 @@ public class RobotContainer {
         // Start at the origin facing the +X direction
         new Pose2d(0, 0, new Rotation2d(0)),
         // Pass through these two interior waypoints, making an 's' curve path
-        List.of(new Translation2d(1, .1), new Translation2d(3, .1)),
+        List.of(new Translation2d(1, .4), new Translation2d(3, .4)),
         // End 3 meters straight ahead of where we started, facing forward
         new Pose2d(4.75, .1, new Rotation2d(0)),
         config);
@@ -253,7 +260,7 @@ public class RobotContainer {
 
 
 Command highLaunch = new RunCommand(
-    () -> m_launcher.highShot(), 
+    () -> m_launcher.lowShot(), 
     m_launcher);
         
     // Reset odometry to the starting pose of the trajectory.
@@ -265,12 +272,12 @@ Command highLaunch = new RunCommand(
          
     // Run path following command, then stop at the end.
     return highLaunch.withTimeout(.3)
-        // .andThen(swerveControllerCommand2)
-        .andThen(m_robotDrive.run(() -> m_robotDrive.drive(0.2, 0, 0, false, false))).withTimeout(5.0)
+         .andThen(swerveControllerCommand2)
+        //.andThen(m_robotDrive.run(() -> m_robotDrive.drive(0.2, 0, 0, false, false))).withTimeout(5.0)
         .andThen(() -> m_robotDrive.drive(0, 0, 0, false, false));
   }
 
-
+//shoot high and then engage
   public Command getAutonomousCommand2() {
     // Create config for trajectory
     TrajectoryConfig config = new TrajectoryConfig(
@@ -310,7 +317,7 @@ Command highLaunch = new RunCommand(
 
 
 Command highLaunch = new RunCommand(
-    () -> m_launcher.highShot(), 
+    () -> m_launcher.lowShot(), 
     m_launcher);
         
     // Reset odometry to the starting pose of the trajectory.
@@ -328,11 +335,11 @@ Command highLaunch = new RunCommand(
   }
 
 
-
+//outside blue
   public Command getAutonomousCommand3() {
     // Create config for trajectory
     TrajectoryConfig config = new TrajectoryConfig(
-        2,
+        1,
         AutoConstants.kMaxAccelerationMetersPerSecondSquared)
         // Add kinematics to ensure max speed is actually obeyed
         .setKinematics(DriveConstants.kDriveKinematics);
@@ -342,9 +349,9 @@ Command highLaunch = new RunCommand(
         // Start at the origin facing the +X direction
         new Pose2d(0, 0, new Rotation2d(0)),
         // Pass through these two interior waypoints, making an 's' curve path
-        List.of(new Translation2d(1, -.07), new Translation2d(3, -.07)),
+        List.of(new Translation2d(1, -.3), new Translation2d(3.3, -.3)),
         // End 3 meters straight ahead of where we started, facing forward
-        new Pose2d(4.75, -.07, new Rotation2d(0)),
+        new Pose2d(4.75, 0, new Rotation2d(0)),
         config);
 
 
@@ -380,15 +387,15 @@ Command highLaunch = new RunCommand(
          
     // Run path following command, then stop at the end.
     return highLaunch.withTimeout(.3)
-        //.andThen(swerveControllerCommand3)
-        .andThen(m_robotDrive.run(() -> m_robotDrive.drive(0.2, 0, 0, false, false))).withTimeout(5.0)
+        .andThen(swerveControllerCommand3)
+        //.andThen(m_robotDrive.run(() -> m_robotDrive.drive(0.2, 0, 0, false, false))).withTimeout(5.0)
         .andThen(m_robotDrive.run(() -> m_robotDrive.drive(0, 0, 0, false, false)));
   }
-
+//blue middle slide inside
   public Command getAutonomousCommand4() {
     // Create config for trajectory
     TrajectoryConfig config = new TrajectoryConfig(
-        2,
+        1,
         AutoConstants.kMaxAccelerationMetersPerSecondSquared)
         // Add kinematics to ensure max speed is actually obeyed
         .setKinematics(DriveConstants.kDriveKinematics);
@@ -424,7 +431,7 @@ Command highLaunch = new RunCommand(
 
 
 Command highLaunch = new RunCommand(
-    () -> m_launcher.highShot(), 
+    () -> m_launcher.lowShot(), 
     m_launcher);
         
     // Reset odometry to the starting pose of the trajectory.
@@ -440,7 +447,7 @@ Command highLaunch = new RunCommand(
   public Command getAutonomousCommand5() {
     // Create config for trajectory
     TrajectoryConfig config = new TrajectoryConfig(
-        2,
+        1,
         AutoConstants.kMaxAccelerationMetersPerSecondSquared)
         // Add kinematics to ensure max speed is actually obeyed
         .setKinematics(DriveConstants.kDriveKinematics);
@@ -476,7 +483,7 @@ Command highLaunch = new RunCommand(
 
 
 Command highLaunch = new RunCommand(
-    () -> m_launcher.highShot(), 
+    () -> m_launcher.lowShot(), 
     m_launcher);
         
     // Reset odometry to the starting pose of the trajectory.
@@ -494,7 +501,7 @@ Command highLaunch = new RunCommand(
   public Command getAutonomousCommand6() {
     // Create config for trajectory
     TrajectoryConfig config = new TrajectoryConfig(
-        2,
+        1,
         AutoConstants.kMaxAccelerationMetersPerSecondSquared)
         // Add kinematics to ensure max speed is actually obeyed
         .setKinematics(DriveConstants.kDriveKinematics);
@@ -530,7 +537,7 @@ Command highLaunch = new RunCommand(
 
 
 Command highLaunch = new RunCommand(
-    () -> m_launcher.highShot(), 
+    () -> m_launcher.lowShot(), 
     m_launcher);
         
     // Reset odometry to the starting pose of the trajectory.
@@ -544,4 +551,119 @@ Command highLaunch = new RunCommand(
     return highLaunch.withTimeout(.3).andThen(swerveControllerCommand5).andThen(() -> m_robotDrive.drive(0, 0, 0, false, false));
   }
 
+  public Command getAutonomousCommand7() {
+    // Create config for trajectory
+    TrajectoryConfig config = new TrajectoryConfig(
+        1,
+        AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+        // Add kinematics to ensure max speed is actually obeyed
+        .setKinematics(DriveConstants.kDriveKinematics);
+       
+    // An example trajectory to follow. All units in meters.
+    Trajectory straigthGamePiece = TrajectoryGenerator.generateTrajectory(
+        // Start at the origin facing the +X direction
+        new Pose2d(0, 0, new Rotation2d(0)),
+        // Pass through these two interior waypoints, making an 's' curve path
+        List.of(new Translation2d(1, -.4), new Translation2d(3, -.4)),
+        // End 3 meters straight ahead of where we started, facing forward
+        new Pose2d(4.75, -.1, new Rotation2d(0)),
+        config);
+
+
+    var thetaController = new ProfiledPIDController(
+        AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+
+   
+        SwerveControllerCommand swerveControllerCommand2 = new SwerveControllerCommand(
+            straigthGamePiece,
+            m_robotDrive::getPose, // Functional interface to feed supplier
+            DriveConstants.kDriveKinematics,
+            
+    
+            // Position controllers
+            new PIDController(AutoConstants.kPXController, 0, 0),
+            new PIDController(AutoConstants.kPYController, 0, 0),
+            thetaController,
+            m_robotDrive::setModuleStates,
+            m_robotDrive);
+
+
+Command highLaunch = new RunCommand(
+    () -> m_launcher.lowShot(), 
+    m_launcher);
+        
+    // Reset odometry to the starting pose of the trajectory.
+    m_robotDrive.resetOdometry(straigthGamePiece.getInitialPose());
+
+
+     
+    
+         
+    // Run path following command, then stop at the end.
+    return highLaunch.withTimeout(.3)
+         .andThen(swerveControllerCommand2)
+        //.andThen(m_robotDrive.run(() -> m_robotDrive.drive(0.2, 0, 0, false, false))).withTimeout(5.0)
+        .andThen(() -> m_robotDrive.drive(0, 0, 0, false, false));
+  }
+
+
+
+
+//red Outside
+  public Command getAutonomousCommand8() {
+    // Create config for trajectory
+    TrajectoryConfig config = new TrajectoryConfig(
+        1,
+        AutoConstants.kMaxAccelerationMetersPerSecondSquared)
+        // Add kinematics to ensure max speed is actually obeyed
+        .setKinematics(DriveConstants.kDriveKinematics);
+       
+    // An example trajectory to follow. All units in meters.
+    Trajectory straigthGamePiece2 = TrajectoryGenerator.generateTrajectory(
+        // Start at the origin facing the +X direction
+        new Pose2d(0, 0, new Rotation2d(0)),
+        // Pass through these two interior waypoints, making an 's' curve path
+        List.of(new Translation2d(1, .3), new Translation2d(3.3, .3)),
+        // End 3 meters straight ahead of where we started, facing forward
+        new Pose2d(4.75, 0, new Rotation2d(0)),
+        config);
+
+
+    var thetaController = new ProfiledPIDController(
+        AutoConstants.kPThetaController, 0, 0, AutoConstants.kThetaControllerConstraints);
+    thetaController.enableContinuousInput(-Math.PI, Math.PI);
+
+   
+        SwerveControllerCommand swerveControllerCommand3 = new SwerveControllerCommand(
+            straigthGamePiece2,
+            m_robotDrive::getPose, // Functional interface to feed supplier
+            DriveConstants.kDriveKinematics,
+            
+    
+            // Position controllers
+            new PIDController(AutoConstants.kPXController, 0, 0),
+            new PIDController(AutoConstants.kPYController, 0, 0),
+            thetaController,
+            m_robotDrive::setModuleStates,
+            m_robotDrive);
+
+
+Command highLaunch = new RunCommand(
+    () -> m_launcher.lowShot(), 
+    m_launcher);
+        
+    // Reset odometry to the starting pose of the trajectory.
+    m_robotDrive.resetOdometry(straigthGamePiece2.getInitialPose());
+
+
+     
+    
+         
+    // Run path following command, then stop at the end.
+    return highLaunch.withTimeout(.3)
+        .andThen(swerveControllerCommand3)
+        //.andThen(m_robotDrive.run(() -> m_robotDrive.drive(0.2, 0, 0, false, false))).withTimeout(5.0)
+        .andThen(m_robotDrive.run(() -> m_robotDrive.drive(0, 0, 0, false, false)));
+  }
 }

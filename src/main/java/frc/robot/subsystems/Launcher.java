@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 
 
@@ -18,6 +19,9 @@ public class Launcher extends SubsystemBase {
  private final DoubleSolenoid highShotSolenoid =
       new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 1, 0); 
 
+      private final DoubleSolenoid midShotSolenoid =
+      new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 5, 4); 
+      
   private final Solenoid lowShotSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM, 3);
   private final Solenoid retractSolenoid = new Solenoid(PneumaticsModuleType.CTREPCM, 2);
       
@@ -31,6 +35,7 @@ public class Launcher extends SubsystemBase {
     highShotSolenoid.set(DoubleSolenoid.Value.kOff);
     retractSolenoid.set(false);
     lowShotSolenoid.set(false);
+    midShotSolenoid.set(DoubleSolenoid.Value.kOff);
   }
 
   public void lowShot(){
@@ -49,17 +54,24 @@ public class Launcher extends SubsystemBase {
   public void highShot(){
     retractSolenoid.set(false);
     lowShotSolenoid.set(false);
+    //midShotSolenoid.set(Value.kForward);
+    Timer.delay(0.02);
     highShotSolenoid.set(DoubleSolenoid.Value.kForward);
-    Timer.delay(.2);
+    Timer.delay(.25);
     highShotSolenoid.set(DoubleSolenoid.Value.kReverse);
+   // midShotSolenoid.set(Value.kReverse);
    retractSolenoid.set(true);
     Timer.delay(0.3);
     retractSolenoid.set(false);
 
-
-
-
-
+}
+public void midShot(){
+  midShotSolenoid.set(DoubleSolenoid.Value.kForward);
+  Timer.delay(.23);
+  midShotSolenoid.set(DoubleSolenoid.Value.kReverse);
+ retractSolenoid.set(true);
+  Timer.delay(0.3);
+  retractSolenoid.set(false);
 
 
 }

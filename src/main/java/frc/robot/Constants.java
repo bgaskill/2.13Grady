@@ -146,7 +146,7 @@ public final class Constants {
 
   public static final class IntakeConstants {
 
-    public static final double intakeSpeed = .4;
+    public static final double intakeSpeed = .5;//.4
     public static final int kIntakeID = 41;
    
   }
@@ -159,7 +159,7 @@ public final class Constants {
 
     public static final int kArmID = 31;
     public static final int kUpPosition = 0;
-    public static final double kDownPosition = -31000;
+    public static final double kDownPosition = -30000;
     
 
 
